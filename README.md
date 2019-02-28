@@ -6,6 +6,7 @@ This version of the website is for local usage.
 # Dependencies
 
 * Python 2.7
+* youtube-dl
 * beautifulsoup4
 * pafy
 * requests
