@@ -22,9 +22,7 @@ This inspired me to try and automate this whole process, by which I could get co
 # How it works
 * The artist name and song name are cleverly parsed from the YouTube video title. This step takes care of all possible combinations of mixed artists, feat. artists and remixes. However, I've worked on the basic assumption on the base format of **Artist - SongName**. Videos which do not follow this format are usually incorrectly parsed.
 
-* Now using the song name and artist, the script searches for an album on Wikipedia. This step usually fails for not so popular songs.
-
-* The album art is obtained by scraping Google Images using appropriate filters. As this is an automated process, it works best for popular songs!
+* The album art is obtained by looking for the youtube thumbnail
 
 * The song is downloaded using the pafy library, in m4a format. ffmpeg converts the file to mp3. After this, eyed3 tags the mp3 file for me.
 
