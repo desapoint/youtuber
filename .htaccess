@@ -1,0 +1,41 @@
+# MOD_DEFLATE COMPRESSION
+#SetOutputFilter DEFLATE
+#AddOutputFilterByType DEFLATE text/html text/css text/plain text/xml application/x-javascript application/x-httpd-php
+#Pour les navigateurs incompatibles
+BrowserMatch ^Mozilla/4 gzip-only-text/html
+BrowserMatch ^Mozilla/4\.0[678] no-gzip
+BrowserMatch \bMSIE !no-gzip !gzip-only-text/html
+BrowserMatch \bMSI[E] !no-gzip !gzip-only-text/html
+#ne pas mettre en cache si ces fichiers le sont déjà
+#SetEnvIfNoCase Request_URI \.(?:gif|jpe?g|png)$ no-gzip
+#les proxies doivent donner le bon contenu
+Header append Vary User-Agent env=!dont-vary
+
+# KILL THEM ETAGS
+Header unset ETag
+FileETag none
+
+# protect the htaccess file
+<files .htaccess>
+order allow,deny
+deny from all
+</files>
+
+# protection de la lecture des répertoires
+Options -Indexes
+
+RewriteEngine On
+ErrorDocument 404 /404.php
+RewriteBase /
+RewriteRule ^(admin)($|/) - [L]
+RewriteRule sitemap.xml sitemap.php [nocase]
+RewriteRule manifest.json manifest.php [nocase]
+
+#RewriteCond %{HTTPS} off
+#RewriteRule .* https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+#RewriteCond %{HTTP_HOST} !^www\. [NC]
+#RewriteRule .* https://www.%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+RewriteRule ^([^\/.]*)\/?$ index.php?page=$1 [L]
+RewriteRule ^([^\/.]*)\/([^\/.]*)\/?$ index.php?page=$1&souspage=$2 [L]
+RewriteRule ^([^\/.]*)\/([^\/.]*)\/([^\/.]*)\/?$ index.php?page=$1&souspage=$2&section=$3 [L]
+RewriteRule ^([^\/.]*)\/([^\/.]*)\/([^\/.]*)\/([^\/.]*)\/?$ index.php?page=$1&souspage=$2&section=$3&extra=$4 [L]
