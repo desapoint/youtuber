@@ -96,91 +96,12 @@ def getNames(string):
 			return (string,"")
 		else:
 			return (string +" "+ remixString,"")
-def getImageURLs(songName, artistName):
 
-	searchTerm = songName +" "+ artistName + " album art"
-	searchTerm = unicode(quote(searchTerm.encode('utf-8')))
-	s = requests.session()
-	searchURL = "https://www.google.co.in/search?q="+searchTerm+"&espv=2&biw=1536&bih=758&tbm=isch&source=lnt&tbs=isz:ex,iszw:500,iszh:500"
-
-	headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:20.0) Gecko/20100101 Firefox/20.0'}
-	page = s.get(searchURL, headers=headers)
-	soup = BeautifulSoup(page.content, "html.parser")
-	box = soup.find(id = "rg_s")
-
-	i = 1
-	imgURLs = []
-	while len(imgURLs) < 3 :
-
-		URL = box.contents[i].find("a").get("href")
-
-		rurl = urlparse(URL)
-		aurl = rurl.query.split("&")[0].replace("imgurl=","")
-		aurl = removePercent(aurl)
-
-		if aurl.endswith(".png") or aurl.endswith(".jpg") or aurl.endswith(".jpeg") or aurl.endswith(".PNG") or aurl.endswith(".JPG"):
-			if "tumblr" not in aurl:
-				imgURLs.append(aurl)
-
-		i = i+3
-
-	return imgURLs
-def getAlbum(songName, artistName):
-
-	searchTerm = songName +" "+ artistName + " album art"
-	searchTerm = simplify(searchTerm)
-	searchTerm = searchTerm.replace("#","")
-	searchTerm = searchTerm.replace("&"," ")
-	searchTerm = searchTerm.replace(" ","+")
-	s = requests.session()
-	searchURL = "https://www.google.co.in/search?q=" + searchTerm
-
-	headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:20.0) Gecko/20100101 Firefox/20.0'}
-	page = s.get(searchURL, headers=headers)
-	soup = BeautifulSoup(page.content, "html.parser")
-	box = soup.find(id = "rg_s")
-	albumname=""
-	a_s = soup.find_all("a")
-	for a in a_s:
-	    
-	    link = a.get("href")
-	    try:
-	        if "wikipedia" in link:
-	            
-	            newpage = s.get(link)
-	            soup = BeautifulSoup(newpage.content)
-	            trs = soup.select("tr.description")
-	            if len(trs)==1:
-	                albumname="Single"
-	            else:
-	                albumname=trs[1].find("a").text
-	            break
-	    except:
-	        pass
-
-	return albumname
 # read the URL sent by PHP
-vidURL = sys.argv[1].strip()
-try:
-	currVid = pafy.new(vidURL)
-except:
-	print "invalid"
-	exit()
+vidTitle = sys.argv[1].strip()
 
-if(currVid.length > 480):
-	print "long"
-	exit()
-
-vidURL = currVid.getbestaudio().url
-title = unicode(currVid.title.strip())
+title = unicode(vidTitle)
 songName, artistName = getNames(title)
-imgURLs = getImageURLs(songName, artistName)
-albumName = getAlbum(songName, artistName)
 
-print vidURL
 print songName.encode('utf-8')
 print artistName.encode('utf-8')
-print albumName.encode('utf-8')
-print imgURLs[0]
-print imgURLs[1]
-print imgURLs[2]
